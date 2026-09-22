@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Atlas.Core", "src\Atlas.Core\Atlas.Core.csproj", "{D5A75256-C9ED-43EE-9543-B59D9E89633F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Atlas.Console", "src\Atlas.Console\Atlas.Console.csproj", "{5C3413DB-6298-44C2-BE3A-D8C1B981FEA3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Atlas.Hokm.Tests", "tests\Atlas.Hokm.Tests\Atlas.Hokm.Tests.csproj", "{FC208795-88E0-4299-AE10-ED80E7A8A709}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Atlas.Hokm", "src\Atlas.Hokm\Atlas.Hokm.csproj", "{02C2C329-633E-4EA0-B12C-42B2ED580D65}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D5A75256-C9ED-43EE-9543-B59D9E89633F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D5A75256-C9ED-43EE-9543-B59D9E89633F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D5A75256-C9ED-43EE-9543-B59D9E89633F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D5A75256-C9ED-43EE-9543-B59D9E89633F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5C3413DB-6298-44C2-BE3A-D8C1B981FEA3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5C3413DB-6298-44C2-BE3A-D8C1B981FEA3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5C3413DB-6298-44C2-BE3A-D8C1B981FEA3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5C3413DB-6298-44C2-BE3A-D8C1B981FEA3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FC208795-88E0-4299-AE10-ED80E7A8A709}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FC208795-88E0-4299-AE10-ED80E7A8A709}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FC208795-88E0-4299-AE10-ED80E7A8A709}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FC208795-88E0-4299-AE10-ED80E7A8A709}.Release|Any CPU.Build.0 = Release|Any CPU
+		{02C2C329-633E-4EA0-B12C-42B2ED580D65}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{02C2C329-633E-4EA0-B12C-42B2ED580D65}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{02C2C329-633E-4EA0-B12C-42B2ED580D65}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{02C2C329-633E-4EA0-B12C-42B2ED580D65}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
