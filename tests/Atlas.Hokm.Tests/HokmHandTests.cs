@@ -173,7 +173,182 @@ public sealed class HokmHandTests
         Assert.Equal(firstTwenty[2], hand.GetHand("south")[0]);
         Assert.Equal(firstTwenty[3], hand.GetHand("east")[0]);
     }
+    
+    [Fact]
+    public void ApplyHakemDecision_ChooseSuit_EstablishesHokm()
+    {
+        var players = CreatePlayers();
+        var hand = new HokmHand(players, "north");
 
+        var decision = HakemDecision.ChooseSuit(Suit.Hearts);
+
+        hand.ApplyHakemDecision(decision);
+
+        Assert.Equal(HakemDecisionType.ChooseSuit, hand.HakemDecision!.Type);
+        Assert.Equal(Suit.Hearts, hand.HokmSuit);
+    }
+
+    [Fact]
+    public void ApplyHakemDecision_CannotBeMadeTwice()
+    {
+        var players = CreatePlayers();
+        var hand = new HokmHand(players, "north");
+
+        hand.ApplyHakemDecision(
+            HakemDecision.ChooseSuit(Suit.Hearts));
+
+        var exception = Assert.Throws<InvalidOperationException>(() =>
+            hand.ApplyHakemDecision(
+                HakemDecision.ChooseSuit(Suit.Spades)));
+
+        Assert.Equal(
+            "The Hakem has already made a decision.",
+            exception.Message);
+    }
+
+    [Fact]
+    public void ApplyHakemDecision_AskTeammateMiddleCard_UsesThirdCardInOriginalOrder()
+    {
+        var players = CreatePlayers();
+        var hand = new HokmHand(players, "north");
+
+        var deck = Deck.CreateStandard();
+        var dealer = new HokmHandDealer();
+
+        dealer.DealInitialCards(
+            hand,
+            deck,
+            DealingDirection.Clockwise);
+
+        var teammate = hand.GetTeammate("north");
+        var expectedMiddleCard = hand.GetHand(teammate.Id)[2];
+
+        Assert.IsType<StandardCard>(expectedMiddleCard);
+
+        var standardCard = (StandardCard)expectedMiddleCard;
+
+        hand.ApplyHakemDecision(
+            HakemDecision.AskTeammateMiddleCard(teammate.Id));
+
+        Assert.Equal(
+            HakemDecisionType.AskTeammateMiddleCard,
+            hand.HakemDecision!.Type);
+
+        Assert.Equal(
+            standardCard.Suit,
+            hand.HokmSuit);
+    }
+    
+    [Fact]
+    public void ApplyHakemDecision_AskTeammateMiddleCard_RejectsOpponent()
+    {
+        var players = CreatePlayers();
+        var hand = new HokmHand(players, "north");
+
+        var deck = Deck.CreateStandard();
+        var dealer = new HokmHandDealer();
+
+        dealer.DealInitialCards(
+            hand,
+            deck,
+            DealingDirection.Clockwise);
+
+        var exception = Assert.Throws<InvalidOperationException>(() =>
+            hand.ApplyHakemDecision(
+                HakemDecision.AskTeammateMiddleCard("east")));
+
+        Assert.Equal(
+            "The requested player must be the Hakem's teammate.",
+            exception.Message);
+
+        Assert.Null(hand.HakemDecision);
+        Assert.Null(hand.HokmSuit);
+    }
+    
+    [Fact]
+    public void ApplyHakemDecision_Naras_IsAllowedWhenConfigured()
+    {
+        var players = CreatePlayers();
+        var options = new HokmOptions
+        {
+            AllowNaras = true
+        };
+
+        var hand = new HokmHand(players, "north", options);
+
+        hand.ApplyHakemDecision(HakemDecision.Naras());
+
+        Assert.Equal(
+            HakemDecisionType.Naras,
+            hand.HakemDecision!.Type);
+
+        Assert.Null(hand.HokmSuit);
+    }
+    
+    [Fact]
+    public void ApplyHakemDecision_Naras_IsRejectedWhenDisabled()
+    {
+        var players = CreatePlayers();
+        var options = new HokmOptions
+        {
+            AllowNaras = false
+        };
+
+        var hand = new HokmHand(players, "north", options);
+
+        var exception = Assert.Throws<InvalidOperationException>(() =>
+            hand.ApplyHakemDecision(HakemDecision.Naras()));
+
+        Assert.Equal(
+            "Naras is not allowed for this Hand.",
+            exception.Message);
+
+        Assert.Null(hand.HakemDecision);
+        Assert.Null(hand.HokmSuit);
+    }
+    
+    [Fact]
+    public void ApplyHakemDecision_Saras_IsAllowedWhenConfigured()
+    {
+        var players = CreatePlayers();
+        var options = new HokmOptions
+        {
+            AllowSaras = true
+        };
+
+        var hand = new HokmHand(players, "north", options);
+
+        hand.ApplyHakemDecision(HakemDecision.Saras());
+
+        Assert.Equal(
+            HakemDecisionType.Saras,
+            hand.HakemDecision!.Type);
+
+        Assert.Null(hand.HokmSuit);
+    }
+    
+    [Fact]
+    public void ApplyHakemDecision_Saras_IsRejectedWhenDisabled()
+    {
+        var players = CreatePlayers();
+        var options = new HokmOptions
+        {
+            AllowSaras = false
+        };
+
+        var hand = new HokmHand(players, "north", options);
+
+        var exception = Assert.Throws<InvalidOperationException>(() =>
+            hand.ApplyHakemDecision(HakemDecision.Saras()));
+
+        Assert.Equal(
+            "Saras is not allowed for this Hand.",
+            exception.Message);
+
+        Assert.Null(hand.HakemDecision);
+        Assert.Null(hand.HokmSuit);
+    }
+    
     private static IReadOnlyList<HokmPlayer> CreatePlayers()
     {
         return

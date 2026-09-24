@@ -8,12 +8,25 @@ namespace Atlas.Hokm;
 public sealed class HokmHand
 {
     private readonly Dictionary<string, List<Card>> _hands;
-
+    private HakemDecision? _hakemDecision;
+    private Suit? _hokmSuit;
+    private readonly HokmOptions _options;
+    
     /// <summary>
     /// Gets the four players participating in the Hand.
     /// </summary>
     public IReadOnlyList<HokmPlayer> Players { get; }
 
+    /// <summary>
+    /// Gets the decision made by the Hakem.
+    /// </summary>
+    public HakemDecision? HakemDecision => _hakemDecision;
+
+    /// <summary>
+    /// Gets the established Hokm suit.
+    /// </summary>
+    public Suit? HokmSuit => _hokmSuit;
+    
     /// <summary>
     /// Gets the identifier of the player who is currently the Hakem.
     /// </summary>
@@ -38,7 +51,8 @@ public sealed class HokmHand
     /// </exception>
     public HokmHand(
         IReadOnlyList<HokmPlayer> players,
-        string hakemId)
+        string hakemId,
+        HokmOptions? options = null)
     {
         ArgumentNullException.ThrowIfNull(players);
         ArgumentException.ThrowIfNullOrWhiteSpace(hakemId);
@@ -71,6 +85,8 @@ public sealed class HokmHand
                 nameof(players));
         }
 
+        _options = options ?? new HokmOptions();
+        
         Players = players;
         HakemId = hakemId;
 
@@ -79,6 +95,83 @@ public sealed class HokmHand
             _ => new List<Card>());
     }
 
+    /// <summary>
+    /// Applies the Hakem's decision and establishes the Hokm suit
+    /// when the decision determines it.
+    /// </summary>
+    public void ApplyHakemDecision(HakemDecision decision)
+    {
+        ArgumentNullException.ThrowIfNull(decision);
+
+        if (_hakemDecision is not null)
+        {
+            throw new InvalidOperationException(
+                "The Hakem has already made a decision.");
+        }
+
+        switch (decision.Type)
+        {
+            case HakemDecisionType.ChooseSuit:
+                if (decision.SelectedSuit is null)
+                {
+                    throw new InvalidOperationException(
+                        "A ChooseSuit decision must contain a suit.");
+                }
+
+                _hokmSuit = decision.SelectedSuit;
+                break;
+
+            case HakemDecisionType.AskTeammateMiddleCard:
+                if (decision.TeammatePlayerId is null)
+                {
+                    throw new InvalidOperationException(
+                        "An AskTeammateMiddleCard decision must contain a teammate.");
+                }
+
+                var teammate = GetTeammate(HakemId);
+
+                if (decision.TeammatePlayerId != teammate.Id)
+                {
+                    throw new InvalidOperationException(
+                        "The requested player must be the Hakem's teammate.");
+                }
+
+                var middleCard = GetMiddleCard(teammate.Id);
+
+                if (middleCard is not StandardCard standardCard)
+                {
+                    throw new InvalidOperationException(
+                        "The teammate's middle card must be a standard card.");
+                }
+
+                _hokmSuit = standardCard.Suit;
+                break;
+
+            case HakemDecisionType.Naras:
+                if (!_options.AllowNaras)
+                {
+                    throw new InvalidOperationException(
+                        "Naras is not allowed for this Hand.");
+                }
+
+                break;
+
+            case HakemDecisionType.Saras:
+                if (!_options.AllowSaras)
+                {
+                    throw new InvalidOperationException(
+                        "Saras is not allowed for this Hand.");
+                }
+
+                break; 
+
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+
+        _hakemDecision = decision;
+    } 
+    
     /// <summary>
     /// Gets the current cards held by a player.
     /// </summary>

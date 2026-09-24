@@ -29,15 +29,15 @@ public sealed class HokmOptions
         HakemRotationDirection.Clockwise;
 
     /// <summary>
-    /// Gets a value indicating whether Naras is allowed in the Match.
+    /// Gets or sets whether the Naras decision is allowed.
     /// </summary>
-    public bool AllowNaras { get; init; }
+    public bool AllowNaras { get; init; } = true;
 
     /// <summary>
-    /// Gets a value indicating whether Saras is allowed in the Match.
+    /// Gets or sets whether the Saras decision is allowed.
     /// </summary>
-    public bool AllowSaras { get; init; }
-
+    public bool AllowSaras { get; init; } = true;
+    
     /// <summary>
     /// Gets the number of Jokers included in the deck.
     /// Normal Hokm uses zero Jokers.
